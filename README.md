@@ -1,3 +1,8 @@
+# WARNING ABOUT THIS FORK
+
+There is no such thing as "known-safe" EntityDataSerializer registration.  
+Wait for https://github.com/FabricMC/fabric/pull/3584 or use a custom packet.
+
 # Canary
 An early warning of poison in the mines.
 
