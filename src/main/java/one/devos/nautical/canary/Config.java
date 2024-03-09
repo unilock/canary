@@ -16,7 +16,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.fabricmc.loader.api.FabricLoader;
 
-public record Config(List<String> trackedDataWhitelist, List<String> stateBuilderWhitelist) {
+public record Config(List<String> trackedDataWhitelist, List<String> stateBuilderWhitelist, List<String> dataSerializerWhitelist) {
 	public static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("canary.json");
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -26,7 +26,10 @@ public record Config(List<String> trackedDataWhitelist, List<String> stateBuilde
 					.forGetter(Config::trackedDataWhitelist),
 			Codec.STRING.listOf()
 					.optionalFieldOf("state_builder_whitelist", List.of())
-					.forGetter(Config::stateBuilderWhitelist)
+					.forGetter(Config::stateBuilderWhitelist),
+			Codec.STRING.listOf()
+					.optionalFieldOf("data_serializer_whitelist", List.of())
+					.forGetter(Config::dataSerializerWhitelist)
 	).apply(instance, Config::new));
 
 	public static final Config INSTANCE = load();
@@ -38,7 +41,8 @@ public record Config(List<String> trackedDataWhitelist, List<String> stateBuilde
 	private static Config makeDefault() {
 		return new Config(
 				List.of("com.example.mymod.Utilities"),
-				List.of("net.example.examplemod.Utils")
+				List.of("net.example.examplemod.Utils"),
+				List.of("org.example.templatemod.Util")
 		);
 	}
 

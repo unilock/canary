@@ -2,6 +2,9 @@ package one.devos.nautical.canary.mixin;
 
 import one.devos.nautical.canary.CanaryException;
 
+import one.devos.nautical.canary.Config;
+import one.devos.nautical.canary.Utils;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,8 +27,14 @@ public class EntityDataSerializersMixin {
 
 	@Inject(method = "registerSerializer", at = @At("HEAD"))
 	private static void onRegister(EntityDataSerializer<?> serializer, CallbackInfo ci) {
+		// check the stacktrace for caller class name
+		StackTraceElement caller = Utils.getCaller();
+		String callerClassName = caller.getClassName();
+		if (Config.INSTANCE.dataSerializerWhitelist().contains(callerClassName))
+			return; // explicitly declared as safe; ex. util methods
+
 		if (vanillaRegistered) {
-			throw new CanaryException("Tried to register a new EntityDataSerializer!");
+			throw new CanaryException("Unsafe EntityDataSerializer registration from [" + callerClassName + "]");
 		}
 	}
 }
